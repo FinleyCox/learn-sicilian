@@ -4,7 +4,7 @@ export default function AIChat() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>AIに相談</Text>
-      <Text style={styles.subtitle}>シシリア語についてAIに質問しましょう</Text>
+      <Text style={styles.subtitle}>シチリア語についてAIに質問しましょう</Text>
     </View>
   );
 }

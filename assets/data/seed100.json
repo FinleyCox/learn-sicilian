@@ -1,0 +1,12 @@
+[
+    { "id": 1, "word": "manciari", "meaning_ja": "食べる", "is_premium": 0 },
+    { "id": 2, "word": "jiri", "meaning_ja": "行く", "is_premium": 0 },
+    { "id": 3, "word": "aviri", "meaning_ja": "持つ／ある", "is_premium": 0 },
+    { "id": 4, "word": "cristiani", "meaning_ja": "人々", "is_premium": 0 },
+    { "id": 5, "word": "grazzii", "meaning_ja": "ありがとう", "is_premium": 0 },
+    { "id": 6, "word": "scusatimi", "meaning_ja": "ごめんなさい／失礼", "is_premium": 0 },
+    { "id": 7, "word": "aspittari", "meaning_ja": "待つ", "is_premium": 0 },
+    { "id": 8, "word": "pecche", "meaning_ja": "なぜ", "is_premium": 0 },
+    { "id": 9, "word": "sfortunatamente", "meaning_ja": "不幸にも", "is_premium": 0 },
+    { "id": 10, "word": "sunnai", "meaning_ja": "聞こえる／聞く", "is_premium": 0 }
+]

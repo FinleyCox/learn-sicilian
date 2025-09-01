@@ -1,9 +1,10 @@
 import { Text, View, FlatList, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   return (
-    <View style={{ flex: 1, padding: 20 }}>
+    <SafeAreaView style={{ flex: 1, padding: 20 }}>
       <FlatList
         data={data()}
         keyExtractor={(item, index) => index.toString()}
@@ -29,7 +30,7 @@ export default function Index() {
         )}
         style={{ flex: 1, marginBottom: 20 }}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 

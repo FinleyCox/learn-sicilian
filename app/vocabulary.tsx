@@ -4,6 +4,8 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { db, initDb } from '../lib/db';
 import { useEntitlement } from '../store/useEntitlement';
 import Checkbox from 'expo-checkbox';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 
 type Row = {
   id: number | string;
@@ -88,18 +90,38 @@ export default function Vocabulary() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-      <View style={styles.header}>
-        <Text style={styles.title}>単語学習</Text>
-        <Text style={styles.subtitle}>シチリア語の単語を学びましょう</Text>
-        <View style={styles.pill}>
-          <Text style={styles.pillText}>進捗 {learnedCount}/{total}</Text>
+      <LinearGradient
+        colors={['#667eea', '#764ba2']}
+        style={styles.headerGradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <View style={styles.header}>
+          <View style={styles.headerContent}>
+            <Text style={styles.title}>単語学習</Text>
+            <Text style={styles.subtitle}>シチリア語の単語を学びましょう</Text>
+          </View>
+          <View style={styles.progressContainer}>
+            <View style={styles.progressPill}>
+              <Ionicons name="checkmark-circle" size={16} color="#10b981" />
+              <Text style={styles.progressText}>進捗 {learnedCount}/{total}</Text>
+            </View>
+            <View style={styles.progressBar}>
+              <View 
+                style={[
+                  styles.progressFill, 
+                  { width: `${(learnedCount / total) * 100}%` }
+                ]} 
+              />
+            </View>
+          </View>
         </View>
-      </View>
+      </LinearGradient>
 
       <FlatList
         data={items}
         keyExtractor={(it) => String(it.id)}
-        contentContainerStyle={{ paddingVertical: 12, gap: 8 }}
+        contentContainerStyle={{ paddingVertical: 12, gap: 8, paddingHorizontal: 0 }}
         scrollIndicatorInsets={{ bottom: (!isPro ? ctaHeight + insets.bottom + 16 : 0) }}
         ListFooterComponent={!isPro ? () => <View style={{ height: ctaHeight + insets.bottom + 16 }} /> : null}
         renderItem={({ item }) => {
@@ -110,17 +132,31 @@ export default function Vocabulary() {
               disabled={!locked ? false : false}
               style={[styles.row, locked && styles.rowLocked]}
             >
-              <View style={{ flex: 1 }}>
-                <Text style={styles.word}>{locked ? '🔒 ' : ''}{item.word}</Text>
-                <Text style={styles.meaning}>{item.meaning_ja}</Text>
+              <View style={styles.rowContent}>
+                <View style={styles.wordContainer}>
+                  {locked && (
+                    <View style={styles.lockIcon}>
+                      <Ionicons name="lock-closed" size={16} color="#f59e0b" />
+                    </View>
+                  )}
+                  <Text style={[styles.word, locked && styles.wordLocked]}>
+                    {item.word}
+                  </Text>
+                </View>
+                <Text style={[styles.meaning, locked && styles.meaningLocked]}>
+                  {item.meaning_ja}
+                </Text>
               </View>
 
               {/* 学習チェック：ロック中は無効化 */}
-              <Checkbox
-                value={!!item.learned}
-                onValueChange={(v) => !locked && toggleLearned(item.id, v)}
-                disabled={locked}
-              />
+              <View style={styles.checkboxContainer}>
+                <Checkbox
+                  value={!!item.learned}
+                  onValueChange={(v) => !locked && toggleLearned(item.id, v)}
+                  disabled={locked}
+                  style={styles.checkbox}
+                />
+              </View>
             </Pressable>
           );
         }}
@@ -131,10 +167,22 @@ export default function Vocabulary() {
           onLayout={onCtaLayout}
           style={[styles.cta, { bottom: insets.bottom + 12, paddingBottom: 12 }]}
         >
-          <Text style={styles.ctaText}>Proで70語アンロック</Text>
-          <Pressable onPress={onLockedPress} style={styles.ctaButton}>
-            <Text style={styles.ctaButtonText}>購入する</Text>
-          </Pressable>
+          <LinearGradient
+            colors={['#f093fb', '#f5576c']}
+            style={styles.ctaGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <View style={styles.ctaContent}>
+              <View style={styles.ctaTextContainer}>
+                <Text style={styles.ctaText}>Proで70語アンロック</Text>
+                <Text style={styles.ctaSubtext}>追加の単語で学習を加速</Text>
+              </View>
+              <Pressable onPress={onLockedPress} style={styles.ctaButton}>
+                <Text style={styles.ctaButtonText}>購入する</Text>
+              </Pressable>
+            </View>
+          </LinearGradient>
         </View>
       )}
     </SafeAreaView>
@@ -142,29 +190,160 @@ export default function Vocabulary() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingHorizontal: 20, backgroundColor: '#f5f5f5' },
-  header: { marginTop: 8, marginBottom: 16 },
-  title: { fontSize: 24, fontWeight: 'bold', color: '#222' },
-  subtitle: { fontSize: 14, color: '#666', marginTop: 4, marginBottom: 16 },
-  pill: { alignSelf: 'flex-start', backgroundColor: '#eee', borderRadius: 9999, paddingVertical: 6, paddingHorizontal: 12, marginBottom: 8 },
-  pillText: { color: '#333', fontWeight: '600' },
-  row: { width: '100%', backgroundColor: '#fff', borderRadius: 14, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 6, elevation: 1 },
-  rowLocked: { opacity: 0.5 },
-  word: { fontSize: 18, fontWeight: '600', color: '#111' },
-  meaning: { fontSize: 14, color: '#666', marginTop: 2 },
+  container: { 
+    flex: 1, 
+    backgroundColor: '#667eea' 
+  },
+  headerGradient: {
+    paddingBottom: 24,
+  },
+  header: { 
+    paddingHorizontal: 20,
+    paddingTop: 16,
+  },
+  headerContent: {
+    marginBottom: 20,
+  },
+  title: { 
+    fontSize: 28, 
+    fontWeight: '800', 
+    color: 'white',
+    marginBottom: 8,
+  },
+  subtitle: { 
+    fontSize: 16, 
+    color: 'rgba(255, 255, 255, 0.9)',
+    lineHeight: 22,
+  },
+  progressContainer: {
+    gap: 12,
+  },
+  progressPill: { 
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)', 
+    borderRadius: 20, 
+    paddingVertical: 8, 
+    paddingHorizontal: 16,
+    alignSelf: 'flex-start',
+    gap: 8,
+  },
+  progressText: { 
+    color: 'white', 
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  progressBar: {
+    height: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: '#10b981',
+    borderRadius: 3,
+  },
+  row: { 
+    backgroundColor: '#fff', 
+    borderRadius: 16, 
+    padding: 16, 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    gap: 16, 
+    shadowColor: '#000', 
+    shadowOpacity: 0.08, 
+    shadowRadius: 12, 
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
+    marginHorizontal: 16,
+  },
+  rowLocked: { 
+    opacity: 0.6,
+    backgroundColor: '#f9fafb',
+  },
+  rowContent: {
+    flex: 1,
+    gap: 4,
+  },
+  wordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  lockIcon: {
+    backgroundColor: '#fef3c7',
+    borderRadius: 12,
+    padding: 4,
+  },
+  word: { 
+    fontSize: 18, 
+    fontWeight: '700', 
+    color: '#1f2937',
+    lineHeight: 24,
+  },
+  wordLocked: {
+    color: '#9ca3af',
+  },
+  meaning: { 
+    fontSize: 15, 
+    color: '#6b7280', 
+    lineHeight: 20,
+  },
+  meaningLocked: {
+    color: '#d1d5db',
+  },
+  checkboxContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+  },
   cta: {
     position: 'absolute',
-    left: 20,
-    right: 20,
-    backgroundColor: '#111',
-    borderRadius: 16,
-    paddingHorizontal: 14,
-    paddingTop: 12,
+    left: 16,
+    right: 16,
+    borderRadius: 20,
+    zIndex: 10,
+  },
+  ctaGradient: {
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+  },
+  ctaContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  ctaText: { color: '#fff', fontWeight: '700' },
-  ctaButton: { backgroundColor: '#ffd54f', borderRadius: 12, paddingVertical: 8, paddingHorizontal: 14 },
-  ctaButtonText: { color: '#111', fontWeight: '800' }
+  ctaTextContainer: {
+    flex: 1,
+  },
+  ctaText: { 
+    color: 'white', 
+    fontWeight: '700',
+    fontSize: 16,
+    marginBottom: 2,
+  },
+  ctaSubtext: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 13,
+  },
+  ctaButton: { 
+    backgroundColor: 'white', 
+    borderRadius: 16, 
+    paddingVertical: 12, 
+    paddingHorizontal: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
+  },
+  ctaButtonText: { 
+    color: '#1f2937',
+    fontSize: 14,
+  }
 });

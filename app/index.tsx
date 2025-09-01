@@ -9,7 +9,6 @@ export default function Index() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>シチリア語学習</Text>
-        <Text style={styles.subtitle}>美しいシチリアの言葉を学びましょう</Text>
       </View>
 
       <FlatList
@@ -64,7 +63,7 @@ function data() {
     {
       text: "AIに相談",
       route: "/ai-chat",
-      description: "AI先生に質問しよう", // ← 最後まで表示される
+      description: "AIチャットで相談しよう",
       icon: "chatbubble-outline",
       gradient: ["#4facfe", "#00f2fe"],
     },

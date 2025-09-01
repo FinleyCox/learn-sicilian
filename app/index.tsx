@@ -38,7 +38,6 @@ export default function Index() {
 function data() {
   return [
     { text: '単語', route: '/vocabulary' },
-    { text: 'フレーズ', route: '/phrases' },
     { text: 'クイズ', route: '/quiz' },
     { text: 'AIに相談', route: '/ai-chat' },
   ]

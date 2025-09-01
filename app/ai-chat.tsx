@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react';
 import { Alert, FlatList, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 
 type ChatMessage = {
   id: string;
@@ -93,10 +95,21 @@ export default function AIChat() {
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView behavior={Platform.select({ ios: 'padding', android: undefined })} style={{ flex: 1 }}>
-        <Text style={styles.title}>AIに相談</Text>
+        <LinearGradient
+          colors={['#4facfe', '#00f2fe']}
+          style={styles.headerGradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <View style={styles.header}>
+            <Text style={styles.title}>AIに相談</Text>
+            <Text style={styles.subtitle}>シチリア語の先生に質問しよう</Text>
+          </View>
+        </LinearGradient>
 
         {!canCallApi && (
           <View style={styles.banner}>
+            <Ionicons name="warning" size={20} color="#f59e0b" />
             <Text style={styles.bannerText}>環境変数 EXPO_PUBLIC_GROQ_API_KEY を設定してください。</Text>
           </View>
         )}
@@ -105,27 +118,55 @@ export default function AIChat() {
           ref={listRef}
           data={messages.filter(m => m.role !== 'system')}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ padding: 16, gap: 8 }}
+          contentContainerStyle={styles.messagesContainer}
           renderItem={({ item }) => (
             <View style={[styles.bubble, item.role === 'assistant' ? styles.bubbleAI : styles.bubbleUser]}>
+              <View style={styles.bubbleHeader}>
+                <Ionicons 
+                  name={item.role === 'assistant' ? 'school' : 'person'} 
+                  size={16} 
+                  color={item.role === 'assistant' ? '#4facfe' : '#667eea'} 
+                />
+                <Text style={styles.bubbleRole}>
+                  {item.role === 'assistant' ? 'AI先生' : 'あなた'}
+                </Text>
+              </View>
               <Text style={styles.bubbleText}>{item.content}</Text>
             </View>
           )}
           onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: true })}
         />
 
-        <View style={styles.inputRow}>
-          <TextInput
-            style={styles.input}
-            value={input}
-            onChangeText={setInput}
-            placeholder="質問を入力（例: 旅行で使う挨拶を教えて）"
-            editable={!sending}
-            multiline
-          />
-          <Pressable onPress={send} style={[styles.sendBtn, (sending || !input.trim()) && { opacity: 0.6 }]} disabled={sending || !input.trim()}>
-            <Text style={styles.sendBtnText}>{sending ? '送信中' : '送信'}</Text>
-          </Pressable>
+        <View style={styles.inputContainer}>
+          <View style={styles.inputRow}>
+            <TextInput
+              style={styles.input}
+              value={input}
+              onChangeText={setInput}
+              placeholder="質問を入力（例: 旅行で使う挨拶を教えて）"
+              placeholderTextColor="#9ca3af"
+              editable={!sending}
+              multiline
+            />
+            <Pressable 
+              onPress={send} 
+              style={[styles.sendBtn, (sending || !input.trim()) && { opacity: 0.6 }]} 
+              disabled={sending || !input.trim()}
+            >
+              <LinearGradient
+                colors={['#667eea', '#764ba2']}
+                style={styles.sendBtnGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <Ionicons 
+                  name={sending ? "hourglass" : "send"} 
+                  size={20} 
+                  color="white" 
+                />
+              </LinearGradient>
+            </Pressable>
+          </View>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -133,16 +174,120 @@ export default function AIChat() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
-  title: { fontSize: 20, fontWeight: '700', color: '#222', paddingHorizontal: 16, paddingTop: 12 },
-  banner: { margin: 16, backgroundColor: '#fff3cd', borderRadius: 12, padding: 12 },
-  bannerText: { color: '#7a5c00' },
-  bubble: { maxWidth: '85%', borderRadius: 14, paddingVertical: 8, paddingHorizontal: 12 },
-  bubbleAI: { alignSelf: 'flex-start', backgroundColor: '#ffffff', borderTopLeftRadius: 4, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 4 },
-  bubbleUser: { alignSelf: 'flex-end', backgroundColor: '#d1f1ff', borderTopRightRadius: 4 },
-  bubbleText: { color: '#222', fontSize: 15 },
-  inputRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 8, padding: 12, backgroundColor: '#fff' },
-  input: { flex: 1, minHeight: 40, maxHeight: 120, borderWidth: 1, borderColor: '#ddd', borderRadius: 12, paddingHorizontal: 12, paddingVertical: 8, backgroundColor: '#fff' },
-  sendBtn: { backgroundColor: '#111', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10, alignItems: 'center', justifyContent: 'center' },
-  sendBtnText: { color: '#fff', fontWeight: '800' }
+  container: { 
+    flex: 1, 
+    backgroundColor: '#f8fafc' 
+  },
+  headerGradient: {
+    paddingBottom: 24,
+  },
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 16,
+  },
+  title: { 
+    fontSize: 28, 
+    fontWeight: '800', 
+    color: 'white',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: 'rgba(255, 255, 255, 0.9)',
+    lineHeight: 22,
+  },
+  banner: { 
+    margin: 20, 
+    backgroundColor: '#fef3c7', 
+    borderRadius: 16, 
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    borderWidth: 1,
+    borderColor: '#f59e0b',
+  },
+  bannerText: { 
+    color: '#92400e',
+    fontSize: 14,
+    fontWeight: '500',
+    flex: 1,
+  },
+  messagesContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    gap: 16,
+  },
+  bubble: { 
+    maxWidth: '85%', 
+    borderRadius: 20, 
+    paddingVertical: 16, 
+    paddingHorizontal: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
+  },
+  bubbleAI: { 
+    alignSelf: 'flex-start', 
+    backgroundColor: '#ffffff', 
+    borderTopLeftRadius: 8,
+  },
+  bubbleUser: { 
+    alignSelf: 'flex-end', 
+    backgroundColor: '#e0f2fe',
+    borderTopRightRadius: 8,
+  },
+  bubbleHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+  },
+  bubbleRole: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#6b7280',
+  },
+  bubbleText: { 
+    color: '#1f2937', 
+    fontSize: 15,
+    lineHeight: 22,
+  },
+  inputContainer: {
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+  },
+  inputRow: { 
+    flexDirection: 'row', 
+    alignItems: 'flex-end', 
+    gap: 12,
+  },
+  input: { 
+    flex: 1, 
+    minHeight: 48, 
+    maxHeight: 120, 
+    borderWidth: 2, 
+    borderColor: '#e5e7eb', 
+    borderRadius: 16, 
+    paddingHorizontal: 16, 
+    paddingVertical: 12, 
+    backgroundColor: '#f8fafc',
+    fontSize: 15,
+    color: '#1f2937',
+  },
+  sendBtn: { 
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  sendBtnGradient: {
+    width: 48,
+    height: 48,
+    alignItems: 'center', 
+    justifyContent: 'center',
+  },
 });

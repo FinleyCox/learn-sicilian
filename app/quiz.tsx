@@ -4,7 +4,7 @@ export default function Quiz() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>クイズ</Text>
-      <Text style={styles.subtitle}>シシリア語の知識をテストしましょう</Text>
+      <Text style={styles.subtitle}>シチリア語の知識をテストしましょう</Text>
     </View>
   );
 }
